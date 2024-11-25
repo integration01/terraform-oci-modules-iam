@@ -5,12 +5,10 @@
 locals {
 
     # Keys and names
-    agregory_dynamic_group_name = "agregory-dg"
-    agregory_dynamic_group_key = "AGREGORY-DYN-GROUP"
     osmh_dynamic_group_key = "OSMH-DYN-GROUP"
     osmh_dynamic_group_name = "osmh-instances"
 
-
+    # Dyanmic 
     osmh_dynamic_group = {
         (local.osmh_dynamic_group_key) = {
             identity_domain_id = var.domain_id
@@ -22,19 +20,16 @@ locals {
         }
     }
 
-    agregory_dynamic_group = {
-        (local.agregory_dynamic_group_key) = {
-            identity_domain_id = var.domain_id
-            name          = "agregory-dg"
-            description   = "Engineer-specific Dynamic Group"
-            matching_rule = "instance.compartment.id = '${local.agregory_id}'}"
-            defined_tags  = {}
-            freeform_tags = {}
-        }
-    }
-
+    # Dynamic Groups - per compartment
+    engineer_dg = { for k,v in module.cislz_compartments.compartments: "DG-${v.name}" => {
+        identity_domain_id : var.domain_id
+        name : "${v.name}-DG",
+        description : "${v.name} compartment",
+        matching_rule : "instance.compartment.id = '${v.id}'"
+    }}  
+    
     # Merge all DGs into one config
     identity_domain_dynamic_groups_configuration = {
-        dynamic_groups : merge(local.agregory_dynamic_group, local.osmh_dynamic_group)
+        dynamic_groups : merge(local.engineer_dg, local.osmh_dynamic_group)
     }
 }

@@ -1,27 +1,32 @@
 locals {
-    # Keys and names
-    agregory_compartment_key  = "AGREGORY-CMP"
-    agregory_compartment_name  = "agregory"
+
+    # Compartment List (add )
+    cmp_list = ["nhorner", "agregory", "rkab"]
 
     # Compartments
-    agregory_cmp = {
-        (local.agregory_compartment_key) : {
-            name : local.agregory_compartment_name,
-            description : "Engineer Compartment",
-            defined_tags : {},
-            freeform_tags : {},
-            children : {}
+
+    engineer_compartments = { for cmp in local.cmp_list: "CMP-${cmp}" => { 
+        name : cmp,
+        description : "${cmp} compartment"
+    }}
+
+    eng = {
+        ENG-CMP = { 
+            name = "engineers", 
+            description = "All engineer compartments", 
+            children = local.engineer_compartments
+        },
+        SPECIAL-CMP = { 
+            name = "projects", 
+            description = "Special project compartments", 
         }
     }
-
-    all_compartments = merge(local.agregory_cmp)
 
     # Place any created compartments in the defined top compartment
     compartments_configuration = {
         default_parent_id : var.cislz_top_policy_compartment_ocid
-        compartments : local.all_compartments
+        enable_delete : false
+        compartments : local.eng
     }
 
-    # The ID for a created compartment - Typically used for a dynamic group
-    agregory_id = module.cislz_compartments.compartments[local.agregory_compartment_key].id
 }

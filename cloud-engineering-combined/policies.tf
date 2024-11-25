@@ -1,5 +1,8 @@
 locals {
     # Policies
+    core_policy_group_name = "'${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}'"
+    core_policy_engineer_compartment = module.cislz_compartments.compartments.ENG-CMP.name
+
     policies = {
         "CE-IAM-ROOT-POLICY" : {
             name : "cloud-engineering-IAM-policy"
@@ -10,24 +13,37 @@ locals {
                 "allow group '${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}' to inspect compartments in tenancy //Allows Cloud Engineers only to list compartments"
             ]
         },
-        "CE-OSS-POLICY" : {
-            name : "cloud-engineering-OSS-policy"
-            description : "Cloud Engineers IAM permissions"
+        "CE-SERVICES-POLICY" : {
+            name : "cloud-engineering-SERVICE-policy"
+            description : "Cloud Engineers Service Enablement permissions"
             compartment_id : "${var.cislz_top_policy_compartment_ocid}"
             statements : [
-                "allow group '${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}' to manage object-family in compartment ${var.cislz_top_policy_compartment_name} //Allows Cloud Engineers to work with all object storage within main CE compartment",
+                "allow group ${local.core_policy_group_name} to manage loganalytics-resources-family in compartment ${local.core_policy_engineer_compartment} //Allows Cloud Engineers to work Logging Analytics",
+                "allow group ${local.core_policy_group_name} to manage loganalytics-features-family in compartment ${local.core_policy_engineer_compartment} //Allows Cloud Engineers to work Logging Analytics",
+                "allow group ${local.core_policy_group_name} to manage logging-family in compartment ${local.core_policy_engineer_compartment} //Allows Cloud Engineers to use OCI Logging",
+                "allow group ${local.core_policy_group_name} to manage email-family in compartment ${local.core_policy_engineer_compartment} //Allows Cloud Engineers to use email",
+                "allow group ${local.core_policy_group_name} to manage cloud-guard-family in compartment ${local.core_policy_engineer_compartment} //Allows Cloud Engineers to use Cloud Guard",
             ]            
         },
         "CE-CORE-POLICY" : {
-            name : "cloud-engineering-core-policy"
+            name : "cloud-engineering-CORE-policy"
             description : "Cloud Engineers Core Service permissions"
             compartment_id : "${var.cislz_top_policy_compartment_ocid}"
             statements : [
-                "allow group '${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}' to read all-resources in compartment ${var.cislz_top_policy_compartment_name} //Allow CE to read everything main CE compartment",
-                "allow group '${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}' to manage instance-family in compartment ${var.cislz_top_policy_compartment_name} //Allow CE to work with all compute within main CE compartment",
-                "allow group '${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}' to manage volume-family in compartment ${var.cislz_top_policy_compartment_name} //Allow CE to work with all block storage within main CE compartment",
-                "allow group '${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}' to use virtual-network-family in compartment ${var.cislz_top_policy_compartment_name} //Allow CE to use networking within main CE compartment",
-                "allow group '${local.cloud_engineering_domain_name}'/'${local.cloud_engineering_group_name}' to manage network-security-groups in compartment ${var.cislz_top_policy_compartment_name} //Allow CE to work manage NSG within main CE compartment",
+                "allow group ${local.core_policy_group_name} to read all-resources in compartment ${local.core_policy_engineer_compartment} //Allow CE to read everything main CE compartment",
+                "allow group ${local.core_policy_group_name} to manage instance-family in compartment ${local.core_policy_engineer_compartment} //Allow CE to work with all compute within main CE compartment",
+                "allow group ${local.core_policy_group_name} to manage volume-family in compartment ${local.core_policy_engineer_compartment} //Allow CE to work with all block storage within main CE compartment",
+                "allow group ${local.core_policy_group_name} to use virtual-network-family in compartment ${local.core_policy_engineer_compartment} //Allow CE to use networking within main CE compartment",
+                "allow group ${local.core_policy_group_name} to manage network-security-groups in compartment ${local.core_policy_engineer_compartment} //Allow CE to work manage NSG within main CE compartment",
+                "allow group ${local.core_policy_group_name} to manage object-family in compartment ${local.core_policy_engineer_compartment} //Allows Cloud Engineers to work with all object storage within main CE compartment",
+            ]            
+        },
+        "CE-DYN-GROUP-POLICY" : {
+            name : "cloud-engineering-DYNAMIC-GROUP-policy"
+            description : "Cloud Engineers Dynamic Group permissions"
+            compartment_id : "${var.cislz_top_policy_compartment_ocid}"
+            statements : [
+                "allow dynamic-group foo to inspect all-resources in compartment ${local.core_policy_engineer_compartment} //Allow CE Dynamic Group to do something in comaprtment tree",
             ]            
         },
         "CE-OSMH-POLICY" : {
