@@ -17,7 +17,7 @@ region               = "us-phoenix-1" # This is your tenancy home region.
 # Input variables
 #---------------------------------------
 
-# The domain ID for the non-default Identity Domain
-domain_id = "ocid1.domain.oc1..aaaaaaaaupgm4bcvtm4mli362abwasdtrxngvmv557b2xsmygca5vrciabfa"
-# cislz_top_policy_compartment_ocid = "ocid1.compartment.oc1..aaaaaaaarq6m3fqvw6bfg5sychftsq5ovkhzfijrpfmch6hvgdlbmaqgceba"
-# cislz_top_policy_compartment_name = "cloud-engineering"
+# The comaprtment OICD
+engineer_compartment_ocid = "ocid1.compartment.oc1..aaaaaaaarq6m3fqvw6bfg5sychftsq5ovkhzfijrpfmch6hvgdlbmaqgceba"
+
+

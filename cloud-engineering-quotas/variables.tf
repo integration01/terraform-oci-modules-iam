@@ -10,14 +10,6 @@ variable "private_key_path" { default = "" }
 variable "private_key_password" { default = "" }
 
 # Required Inputs
-variable "domain_id" {
-    description = "OCID of Identity domain (nondefault)"
+variable "engineer_compartment_ocid" {
+    description = "OCID of compartment where common cloud-engineering is located"
 }
-
-# variable "cislz_top_policy_compartment_ocid" {
-#     description = "OCID of compartment where common cloud-engineering policies can be created"
-# }
-
-# variable "cislz_top_policy_compartment_name" {
-#     description = "Name of compartment where common cloud-engineering exists"
-# }
